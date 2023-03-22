@@ -1,0 +1,45 @@
+#!/bin/bash
+
+if [[ "$#" -gt 1 ]] ; then
+	echo "HOW DARE YOU DO MORE THAN ONE COMMAND!"
+	exit 7
+elif [[ "$#" -eq 0 ]] ; then 
+	echo "Usage: makeflask <APP_NAME>"
+	exit 0
+fi
+
+if [[ -d "$1" ]] ; then
+	echo "Directory already exists."
+	echo "Would you like to overwrite the directory? [y/n]: "
+	read -r ans
+
+	if [[ $ans == "y" ]] ; then
+		echo "Overwriting now..."
+		rm -rf $1
+
+	elif [[ $ans == "n" ]] ; then
+		echo "Ok fine I won't then, jeez"
+		exit 0
+
+	else
+		echo "y or n not input, you neanderthal"
+		exit 5
+	fi
+fi
+cd $1
+cat>app.py
+from flask import Flask, render_template
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+	return render_template('index.html')
+
+python3 -m venv env
+source env/bin/activate
+pip install Flask
+pip install requests
+mkdir templates
+makehtml templates/index
+mkdir static
+touch appclient.py
